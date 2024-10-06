@@ -1,12 +1,12 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-map<string, pair<bool, bool>> trx;      // 1st bool means isCommited and 2nd bool means toBeConsidered
-map<string, pair<string, string>> blocks;       // 1st string means redo value and 2nd string means undo value
+map<string, pair<bool, bool>> trx;      
+map<string, pair<string, string>> blocks;       
 vector<string> commands, redoList, undoList;
 string line, str;
 string t, bl, oldVal, newVal;
-int i = 0, starts = 0, ckptIndex = -1;
+int i = 0, ckptIndex = -1;
 
 vector<string> getRedoList();
 vector<string> getUndoList();
@@ -16,7 +16,9 @@ void readInput();
 void getActions();
 
 int main(){
+    
     readInput();
+
     redoList = getRedoList();
     undoList = getUndoList();
 
@@ -37,10 +39,9 @@ void readInput(){
         line = line.substr(1, line.size() - 2);
         commands.push_back(line);
         if(line[0]=='S'){
-            starts++;
             istringstream iss(line);
-            iss >> str;
-            iss >> str;
+            iss >> str; // START
+            iss >> str; // T1
             trx[str].first = false;
             trx[str].second = true;
         }
@@ -109,26 +110,29 @@ void getActions(){
         if(commands[i][0] == 'T'){
             istringstream iss(commands[i]);
             iss >> t;
-            if(!trx[t].second){
+            if(!trx[t].second){ // not considered
                 continue;
             }
             iss >> bl;
             iss >> oldVal;
             iss >> newVal;
-            auto it = blocks.begin();
-            while(it != blocks.end()){
-                if(it->first == bl){
-                    break;
-                }
-                it++;
+            if(!trx[t].first) {
+                blocks[bl].second = oldVal;   
             }
-            if(it != blocks.end()){
-                if(trx[t].first){
-                    it->second.first = newVal;
-                }
-                else{
-                    it->second.second = oldVal;
-                }
+        }
+    }
+    for(i = commands.size() - 1; i >= 0; i--){
+        if(commands[i][0] == 'T'){
+            istringstream iss(commands[i]);
+            iss >> t;
+            if(!trx[t].second){ // not considered
+                continue;
+            }
+            iss >> bl;
+            iss >> oldVal;
+            iss >> newVal;
+            if(trx[t].first) {
+                blocks[bl].first = newVal;   
             }
         }
     }
