@@ -3,19 +3,36 @@ using namespace std;
 
 map<string, pair<bool, bool>> trx;      // 1st bool means isCommited and 2nd bool means toBeConsidered
 map<string, pair<string, string>> blocks;       // 1st string means redo value and 2nd string means undo value
-vector<string> commands;
+vector<string> commands, redoList, undoList;
+string line, str;
+string t, bl, oldVal, newVal;
+int i = 0, starts = 0, ckptIndex = -1;
 
 vector<string> getRedoList();
 vector<string> getUndoList();
 void printList(vector<string> list);
 void printAction();
+void readInput();
+void getActions();
 
 int main(){
-    freopen("input3.txt", "r", stdin);
-    string line, str;
-    string t, bl, oldVal, newVal;
-    int i = 0, starts = 0, ckptIndex = -1;
-    vector<string> redoList, undoList;
+    readInput();
+    redoList = getRedoList();
+    undoList = getUndoList();
+
+    cout << "Redo list: ";
+    printList(redoList);
+    cout << "Undo list: ";
+    printList(undoList);
+
+    getActions();    
+    printAction();
+    return 0;
+}
+
+void readInput(){
+    freopen("input.txt", "r", stdin);
+
     while(getline(cin, line)){
         line = line.substr(1, line.size() - 2);
         commands.push_back(line);
@@ -54,44 +71,6 @@ int main(){
             }
         }
     }
-
-    redoList = getRedoList();
-    undoList = getUndoList();
-
-    cout << "Redo list: ";
-    printList(redoList);
-    cout << "Undo list: ";
-    printList(undoList);
-
-    for(i = commands.size() - 1; i >= 0; i--){
-        if(commands[i][0] == 'T'){
-            istringstream iss(commands[i]);
-            iss >> t;
-            if(!trx[t].second){
-                continue;
-            }
-            iss >> bl;
-            iss >> oldVal;
-            iss >> newVal;
-            auto it = blocks.begin();
-            while(it != blocks.end()){
-                if(it->first == bl){
-                    break;
-                }
-                it++;
-            }
-            if(it != blocks.end()){
-                if(trx[t].first){
-                    it->second.first = newVal;
-                }
-                else{
-                    it->second.second = oldVal;
-                }
-            }
-        }
-    }
-    printAction();
-    return 0;
 }
 
 vector<string> getRedoList(){
@@ -123,6 +102,36 @@ void printList(vector<string> list){
         cout << l << " ";
     }
     cout<<endl;
+}
+
+void getActions(){
+    for(i = commands.size() - 1; i >= 0; i--){
+        if(commands[i][0] == 'T'){
+            istringstream iss(commands[i]);
+            iss >> t;
+            if(!trx[t].second){
+                continue;
+            }
+            iss >> bl;
+            iss >> oldVal;
+            iss >> newVal;
+            auto it = blocks.begin();
+            while(it != blocks.end()){
+                if(it->first == bl){
+                    break;
+                }
+                it++;
+            }
+            if(it != blocks.end()){
+                if(trx[t].first){
+                    it->second.first = newVal;
+                }
+                else{
+                    it->second.second = oldVal;
+                }
+            }
+        }
+    }
 }
 
 void printAction(){
