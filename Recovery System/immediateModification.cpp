@@ -11,7 +11,7 @@ void printList(vector<string> list);
 void printAction();
 
 int main(){
-    freopen("input.txt", "r", stdin);
+    freopen("input3.txt", "r", stdin);
     string line, str;
     string t, bl, oldVal, newVal;
     int i = 0, starts = 0, ckptIndex = -1;
