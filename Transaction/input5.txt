@@ -1,0 +1,5 @@
+T1,R(X),W(Y),-,-,-,COM,-,-
+T2,R(Y),W(Z),-,-,R(X),COM,-
+T3,R(Z),W(Y),-,-,COM,-,-
+T4,-,R(X),W(Y),-,-,COM,-,COM
+T5,-,-,R(Y),W(Z),-,-,COM,-

@@ -6,8 +6,12 @@ void makeEdges(string pageName, char currOperation, int currTrx ,int currTime);
 string getPageName(string str);
 vector<vector<string>> trxs;
 vector<vector<bool>> dependencyGraph;
+vector<vector<int>> adjList;
+bool isCyclic();
+bool dfsCheck(int node, vector<int> &vis, vector<int> &pathVis);
+
 int main(){
-    freopen("input.txt", "r", stdin);
+    freopen("input5.txt", "r", stdin);
     string trx;
     while(getline(cin, trx)){
         vector<string> parsedTrx;
@@ -32,14 +36,28 @@ int main(){
         }
         cout << endl;
     }
-    
+    cout << endl;
+    for(int i = 0; i < adjList.size(); i++){
+        cout << i << ": ";
+        for(int j = 0; j < adjList[i].size(); j++){
+            cout << adjList[i][j] << " ";
+        }
+        cout << endl;
+    }
+    // cout << adjList.size() << endl;
+    if(isCyclic()){
+        cout << "There is a cycle" << endl;
+    }
+    else{
+        cout << "There is no cycle" << endl;
+    }
     
     return 0;
 }
 
 void makeGraph(){
     for(int i = 0; i < trxs.size(); i++){
-        string trxName = trxs[i][0];
+        // string trxName = trxs[i][0];
         for(int j = 1; j < trxs[i].size(); j++){
             if(trxs[i][j][0] == 'R' || trxs[i][j][0] == 'W'){
                 string pageName = getPageName(trxs[i][j]);
@@ -47,6 +65,18 @@ void makeGraph(){
                 makeEdges(pageName, currOperation, i, j);
             }
         }
+    }
+    for(int i = 0; i < dependencyGraph.size(); i++){
+        vector<int> adj;
+        // cout << i << ": ";
+        for(int j = 0; j < dependencyGraph.size(); j++){
+            if(dependencyGraph[i][j]){
+                // cout << j << " ";
+                adj.push_back(j);
+            }
+        }
+        // cout << endl;
+        adjList.push_back(adj);
     }
 }
 
@@ -64,7 +94,7 @@ void makeEdges(string pageName, char currOperation, int currTrx, int currTime){
                     string thisPage = getPageName(trxs[i][j]);
                     if(thisPage == pageName){
                         if(!(currOperation == 'R' && trxs[i][j][0] == 'R')){
-                            dependencyGraph[i][currTrx] = true;
+                            dependencyGraph[currTrx][i] = true;
                             continue;
                         }
                     }
@@ -72,4 +102,34 @@ void makeEdges(string pageName, char currOperation, int currTrx, int currTime){
             }
         }
     }
+}
+
+bool isCyclic(){
+    vector<int> vis(adjList.size(), 0);
+    vector<int> pathVis(adjList.size(), 0);
+    for(int i = 0; i < adjList.size(); i++){
+        if(!vis[i]){
+            if(dfsCheck(i, vis, pathVis)){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool dfsCheck(int node, vector<int> &vis, vector<int> &pathVis){
+    vis[node] = 1;
+    pathVis[node] = 1;
+    for(auto it : adjList[node]){
+        if(!vis[it]){
+            if(dfsCheck(it, vis, pathVis)){
+                return true;
+            }
+        }
+        else if(pathVis[it]){
+            return true;
+        }
+    }
+    pathVis[node] = 0;
+    return false;
 }
