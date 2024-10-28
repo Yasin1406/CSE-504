@@ -25,31 +25,31 @@ int main(){
     dependencyGraph.resize(trxs.size(), vector<bool>(trxs.size()));
     makeGraph();
     // cout << dependencyGraph.size() << " " << dependencyGraph[0].size() << endl;
-    for(auto dg : dependencyGraph){
-        for(auto d : dg){
-            if(d){
-                cout << "1 ";
-            }
-            else{
-                cout << "0 ";
-            }
-        }
-        cout << endl;
-    }
-    cout << endl;
-    for(int i = 0; i < adjList.size(); i++){
-        cout << i << ": ";
-        for(int j = 0; j < adjList[i].size(); j++){
-            cout << adjList[i][j] << " ";
-        }
-        cout << endl;
-    }
+    // for(auto dg : dependencyGraph){
+    //     for(auto d : dg){
+    //         if(d){
+    //             cout << "1 ";
+    //         }
+    //         else{
+    //             cout << "0 ";
+    //         }
+    //     }
+    //     cout << endl;
+    // }
+    // cout << endl;
+    // for(int i = 0; i < adjList.size(); i++){
+    //     cout << i << ": ";
+    //     for(int j = 0; j < adjList[i].size(); j++){
+    //         cout << adjList[i][j] << " ";
+    //     }
+    //     cout << endl;
+    // }
     // cout << adjList.size() << endl;
     if(isCyclic()){
-        cout << "There is a cycle" << endl;
+        cout << "Not serializable conflict" << endl;
     }
     else{
-        cout << "There is no cycle" << endl;
+        cout << "Serializable conflict" << endl;
     }
     
     return 0;
